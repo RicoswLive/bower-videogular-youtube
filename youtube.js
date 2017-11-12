@@ -31,7 +31,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                             'rel': 0,
                             'autoplay': 0, //Switch autoplay to 1 to autoplay videos
                             'start': 0,
-                            'iv_load_policy': 1
+                            'wmode': "transparent"
                         };
 
                         if (optionsArr !== null) {
@@ -54,7 +54,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                                   });
                             } else {
                                 $rootScope.$watch('youtubeApiReady', function(value) {
-                                    if (value) {
+
                                         ytplayer = new YT.Player(API.mediaElement[0], {
                                             videoId: getYoutubeId(url),
                                             playerVars: playerVars,
@@ -63,7 +63,7 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                                                 'onStateChange': onVideoStateChange
                                             }
                                         });
-                                    }
+
                                 });
                             }
                         }
@@ -74,6 +74,9 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
 
                         function onVideoReady() {
                             //Define some property, method for player
+
+                            ytplayer.setVolume(API.volume * 100.0);
+
                             API.mediaElement[0].__defineGetter__("currentTime", function () {
                                 return ytplayer.getCurrentTime();
                             });
@@ -98,20 +101,21 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                             API.mediaElement[0].__defineSetter__("volume", function (volume) {
                                 return ytplayer.setVolume(volume * 100.0);
                             });
-                            API.mediaElement[0].__defineGetter__("playbackRate", function () {
-                                return ytplayer.getPlaybackRate();
-                            });
-                            API.mediaElement[0].__defineSetter__("playbackRate", function (rate) {
-                                return ytplayer.setPlaybackRate(rate);
-                            });
                             API.mediaElement[0].play = function () {
                                 ytplayer.playVideo();
                             };
                             API.mediaElement[0].pause = function () {
                                 ytplayer.pauseVideo();
                             };
+                            API.mediaElement[0].__defineGetter__("getAvailableQualityLevels", function() {
+                              return ytplayer.getAvailableQualityLevels();
+                            });
+                            API.mediaElement[0].__defineGetter__("ytplayer", function() {
+                              return ytplayer;
+                            });
                             updateTime(); // Initial time update
-                            angular.element(ytplayer.getIframe()).css({'width':'100%','height':'100%'});
+                            //angular.element(ytplayer.getIframe()).css({'width':'100%','height':'100%', 'max-width':'100%', 'max-height':'100%'});
+                            angular.element(ytplayer.getIframe()).addClass('youtubeIframePlayer');
 
                             // Trigger canplay event
                             var event = new CustomEvent("canplay");
