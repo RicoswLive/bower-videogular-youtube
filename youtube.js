@@ -120,6 +120,8 @@ angular.module("info.vietnamcode.nampnq.videogular.plugins.youtube", [])
                             // Trigger canplay event
                             var event = new CustomEvent("canplay");
                             API.mediaElement[0].dispatchEvent(event);
+                            
+                            $rootScope.ytplayer = ytplayer;
                         }
 
                         function updateTime() {
